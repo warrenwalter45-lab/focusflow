@@ -1,0 +1,270 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#211e1a">
+  <title>Focus Flow AI</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #211e1a;
+      color: #f5efe5;
+      min-height: 100vh;
+      padding: 22px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      font-size: 23px;
+      font-weight: bold;
+      color: #e5a34b;
+    }
+
+    .date {
+      color: #b9ad9d;
+      font-size: 13px;
+    }
+
+    .card {
+      background: #302b25;
+      border: 1px solid #494035;
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 20px;
+    }
+
+    .eyebrow {
+      color: #e5a34b;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 27px;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+
+    p {
+      color: #c9bfb2;
+      line-height: 1.6;
+    }
+
+    .task {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid #494035;
+    }
+
+    .task:last-child {
+      border-bottom: none;
+    }
+
+    .task input {
+      width: 19px;
+      height: 19px;
+      accent-color: #e5a34b;
+    }
+
+    .task span {
+      flex: 1;
+    }
+
+    .task input:checked + span {
+      text-decoration: line-through;
+      color: #928779;
+    }
+
+    .progress {
+      background: #494035;
+      height: 8px;
+      border-radius: 20px;
+      margin-top: 15px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      background: #e5a34b;
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    .add-task {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .add-task input {
+      flex: 1;
+      min-width: 0;
+      padding: 13px;
+      border-radius: 9px;
+      border: 1px solid #625648;
+      background: #211e1a;
+      color: white;
+    }
+
+    button {
+      background: #e5a34b;
+      color: #211e1a;
+      border: none;
+      border-radius: 9px;
+      padding: 12px 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .footer {
+      text-align: center;
+      color: #928779;
+      font-size: 12px;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">Focus Flow AI.</div>
+    <div class="date" id="today"></div>
+  </header>
+
+  <main>
+    <section class="card">
+      <div class="eyebrow">MORNING BRIEF</div>
+      <h1>Your Day Simplified.</h1>
+      <p id="brief">
+        Welcome to a new day. Focus on what matters,
+        take things one step at a time, and keep moving
+        towards your goals.
+      </p>
+    </section>
+
+    <section class="card">
+      <div class="eyebrow">YOUR DAY</div>
+      <h2>Focus Flow</h2>
+      <p id="progress-text">0 of 3 tasks completed</p>
+
+      <div class="progress">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+
+      <div id="task-list">
+        <label class="task">
+          <input type="checkbox">
+          <span>Plan your day</span>
+        </label>
+
+        <label class="task">
+          <input type="checkbox">
+          <span>Work on your most important goal</span>
+        </label>
+
+        <label class="task">
+          <input type="checkbox">
+          <span>Review your progress</span>
+        </label>
+      </div>
+
+      <div class="add-task">
+        <input id="new-task" type="text"
+          placeholder="Add a new task...">
+        <button onclick="addTask()">Add</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="footer">
+    Your life. Your goals. One intelligent flow.
+  </div>
+
+  <script>
+    const today = new Date();
+
+    document.getElementById("today").textContent =
+      today.toLocaleDateString("en-KE", {
+        weekday: "long",
+        day: "numeric",
+        month: "long"
+      });
+
+    function updateProgress() {
+      const tasks = document.querySelectorAll(
+        "#task-list input[type='checkbox']"
+      );
+
+      const completed = [...tasks].filter(
+        task => task.checked
+      ).length;
+
+      const total = tasks.length;
+      const percentage = total
+        ? (completed / total) * 100
+        : 0;
+
+      document.getElementById("progress-text").textContent =
+        `${completed} of ${total} tasks completed`;
+
+      document.getElementById("progress-bar").style.width =
+        percentage + "%";
+    }
+
+    document.getElementById("task-list").addEventListener(
+      "change", updateProgress
+    );
+
+    function addTask() {
+      const input = document.getElementById("new-task");
+      const value = input.value.trim();
+
+      if (!value) return;
+
+      const label = document.createElement("label");
+      label.className = "task";
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+
+      const span = document.createElement("span");
+      span.textContent = value;
+
+      label.appendChild(checkbox);
+      label.appendChild(span);
+
+      document.getElementById("task-list").appendChild(label);
+
+      input.value = "";
+      updateProgress();
+    }
+
+    updateProgress();
+  </script>
+
+</body>
+</html>
